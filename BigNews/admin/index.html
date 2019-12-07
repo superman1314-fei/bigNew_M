@@ -67,7 +67,13 @@
             $('.user_center_link img').attr('src',res.data.userPic)
         }
     })
-    
+    //退出功能 删除token和跳转登录页面
+    $('.logout').on('click',function(){
+        //删除token
+            localStorage.removeItem('token');
+            //跳转登录页
+            window.location.href='./login.html'
+    })
 
 })()
 
