@@ -43,38 +43,176 @@
                 <tfoot>
                     <tr>
                         <td colspan="3" class="text-center">
-                            <a href="javascript:void(0)" class="btn btn-success" id="xinzengfenlei" data-toggle="modal"
-                                data-target="#myModal">新增分类</a>
+                            <a href="javascript:void(0)" class="btn btn-success " id="xinzengfenlei" data-toggle="modal"
+                                data-target="#myModal" data-target="#myModal">新增分类</a>
                         </td>
                     </tr>
                 </tfoot>
             </table>
         </div>
     </div>
+<!-- 使用Bootstrap -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title" id="exampleModalLabel">提示</h4>
+            </div>
+            <div class="modal-body">
+              <form>
+                  <!-- 用隐藏域把id存储起来 -->
+                  <input type="hidden" name="id" id='cateid'>
+                <div class="form-group">
+                  <label for="recipient-name" class="control-label">文章标题</label>
+                  <input type="text" class="form-control" id="recipient-name">
+                </div>
+                <div class="form-group">
+                  <label for="message-text" class="control-label">文章类型</label>
+                  <textarea class="form-control" id="message-text"></textarea>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+              <button type="button" class="btn btn-primary btn-confirm">确定</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     <script src="./libs/http.js"></script>
     
-  <script type="text/html" id="categoryList"> //使用art-template架构
+  <script type="text/html" id="categoryList"> <!-- 使用art-template架构 -->
     {{each data  v}}
     <tr>
             <td>{{v.name}}</td>
             <td>{{v.slug}}</td>
             <td class="text-center">
-                <a href="javascript:void(0)" data-id='1' data-toggle="modal" class=" btn btn-info btn-xs">编辑</a>
-                <a href="javascript:void(0)" data-id='1' class="btn btn-danger btn-xs">删除</a>
+                <a href="javascript:void(0)" data-id='{{v.id}}' data-toggle="modal" class=" btn btn-info btn-xs confirm" data-target="#myModal">编辑</a>
+                <a href="javascript:void(0)" data-id='{{v.id}}' class="btn btn-danger btn-xs">删除</a>
             </td>
         </tr>
     {{/each}}
 </script>
 <script>
-$.ajax({
-    url:BigNew.category_list,
-    type:'get',
-    success:function(res){
-        // console.log(res);
-        $('tbody').html(template('categoryList',res))//动态生成数据
+// $.ajax({
+//     url:BigNew.category_list,
+//     type:'get',
+//     success:function(res){
+//         // console.log(res);
+//         $('tbody').html(template('categoryList',res))//动态生成数据
+//     }
+// })
+// $('#myModal').on('show.bs.modal',function(e){
+//     let related =e.relatedTarget
+//     if(related==$('#xinzengfenlei')[0]){
+//         $('.confirm').text('新增') 
+//     }else{
+//         $('.confirm').text('编辑') 
+//         // let name=$('#recipient-name').val();
+//         // let slug=$('#message-text').val()
+//         let cateId = $(confirm).attr('data-id');
+//         $.post({
+//             url:BigNew.category_search,
+//             data:{
+//               id:cateId
+//             },
+//             success:function(res){
+//                 console.log(res);
+                
+//             }
+
+//         })
+//     }
+    
+// })
+// //点击编辑器获得数据
+$(function(){
+    getData()
+function getData(){
+    $.get({
+        url:BigNew.category_list,
+        success:function(res){
+            // console.log(res);
+            $('tbody').html(template('categoryList',res))//动态生成数据
+        }
+    })
+}
+$('#myModal').on('show.bs.modal	',function(e){
+    let dom=e.relatedTarget;
+   
+    
+    if(dom==$('#xinzengfenlei')[0]){
+        $('#exampleModalLabel').text('新增文章分类')
+        $('.btn-confirm').text('新增').addClass('.btn-success').removeClass('ben-primary')
+        $('form')[0].reset();//将表单中的数据全部重置，而且reset这个方法是原生对象需要转为dom对象
+        $('.btn-confirm').on('click',function(){
+            let name=$('#recipient-name').val()
+            let slug=$('#message-text').val()
+            if(name=='' || slug==''){
+                alert('请写数据')
+                return;
+            }
+            $.post({
+                url:BigNew.category_add,
+                data:{
+                    name:name,
+                    slug:slug
+                },
+                success:function(res){
+                    console.log(res);
+                    if(res.code==201){
+                        $('#myModal').modal('hide')
+                        getData()
+                    }
+                
+                }
+            })
+        })
+    }else{
+        $('#exampleModalLabel').text('编辑文章分类')
+        $('#ben-confirm').text('编辑').addClass('btn-primary').removeClass('btn-success');
+        //得到一个文章类别的id 根据id，发送ajax请求
+        let cateId=$(dom).attr('data-id')
+       $.get({
+           url:BigNew.category_search,
+           data:{id:cateId},
+           success:function(res){
+             if(res.code===200){
+                 $('#recipient-name').val(res.data[0].name)
+                 $('#message-text').val(res.data[0].slug)
+                 $('#cateid').val(res.data[0].id)
+               
+                 
+                 
+             }
+               
+           }
+       })
+       $('.btn-confirm').on('click',function(){
+           let name=$('#recipient-name').val()
+           let slug=$('#message-text').val()
+           let id=$('#cateid').val()
+           console.log(13);
+           
+           $.post({
+               url:BigNew.category_edit,
+               data:{name:name,slug:slug,id:id},
+               success:function(res){
+                $('#myModal').modal('hide')
+                getData()
+                
+              }
+           })
+        
+       })
+        
+
     }
 })
 
+})
 
 </script>
 </html>
