@@ -60,6 +60,7 @@
   </div>
 
 </body>
+<script src="../admin/libs/http.js"></script>
 <script>
 (function(){
     $('.input_sub').on('click',function(e){
@@ -71,9 +72,11 @@
         if(email===''||pass==='' ){
           $('.modal-body').text('请输入正确的用户名或者密码');
           $('#example').modal({keyboard:true})//按esc取消模态框
+          return;
         }else{
           $.ajax({
             url:'http://localhost:8080/api/v1/admin/user/login',
+            // url:'window.BigNew.user_login',
             type:'post',
             // dataType:'json',
             data:{
@@ -88,8 +91,9 @@
               $('#example').on('hidden.bs.modal',function(){
                 location.href='./index.html'
               })
-          
-              
+            }else{
+              $('.modal-body').text(res.msg );
+              $('#example').modal({keyboard:true});
             }
             }
           })

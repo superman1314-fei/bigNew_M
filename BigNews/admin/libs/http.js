@@ -11,5 +11,8 @@ var BigNew={
     category_search: baseURL +'/admin/category/search',//文章类别搜索
     category_edit: baseURL +'/admin/category/edit',//文章类别编辑
     category_delete: baseURL +'/admin/category/delete',//文章类别删除
-}
+};
+
+// 暴露接口
+w.BigNew = BigNew;
 })(window)
