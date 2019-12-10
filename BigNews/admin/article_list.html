@@ -86,8 +86,9 @@
   <script src="./libs/http.js"></script>
   <!-- 获取类表类型 -->
   <script type="text/html" id="categoryList">
+    <option value="">所有分类</option>
      {{each $data v}}
-     <option value="">所有分类</option>
+    
      <option value="{{v.id}}">{{v.name}}</option>
     {{/each}}
   </script>
@@ -161,7 +162,15 @@ getData(mypage,function(res){
             });
 })
 
+    // 点击筛选数据
+    $('#btnSearch').on('click',function(e){
+        e.preventDefault();//阻止默认
+          getData(mypage,function(res){
+            $('#pagination-demo').twbsPagination('changeTotalPages',res.data.totalPage,1)
+        })
 
+        
+    })
     })();
 
 
