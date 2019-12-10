@@ -138,7 +138,7 @@
         success: function(res) {
             $("#tableId").html(template("artList", res.data.data));
             if(callback != null){
-                callback(+)
+                callback(res)
         }}
       });
       }
@@ -160,9 +160,6 @@ getData(mypage,function(res){
               }
             });
 })
-
-
-
 
 
     })();
