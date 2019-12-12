@@ -80,7 +80,7 @@
         <div class="row text-center">
           <ul id="pagination-demo" class="pagination-sm"></ul>
         </div>
-        <div id="tips"> 请没有数据了哦</div>
+        <div id="tips">请没有数据了哦</div>
       </div>
     </div>
   </body>
@@ -121,76 +121,79 @@
     let perpage = 10; //页数
     //渲染内容类表
 
-    function getData(pages,callback){
+    function getData(pages, callback) {
       $.get({
-      url: BigNew.article_query,
-      data: {
-        type: $("#tableId").val(),
-        state: $("#selStatus").val(),
-        page: pages,
-        perpage: perpage
-      },
-      success: function(res) {
-        $("#tableId").html(template("contentList", res.data.data));
-        
-        
-          if(res.data.data.length !==0 && callback !=null){
-            $('#pagination-demo').show();
-            $('#tips').hide();
-            callback(res)
-          }else if( res.data.totalPage !==0 && res.data.data.length==0 && res.data.totalPage== mypage -1){
-            mypage -=1;
-            $('#pagination-demo').twbsPagination('changeTotalPages',res.data.totalPage,mypage)
-          }
-          else{
-            $('#pagination-demo').hide();
-            $('#tips').show();
+        url: BigNew.article_query,
+        data: {
+          type: $("#tableId").val(),
+          state: $("#selStatus").val(),
+          page: pages,
+          perpage: perpage
+        },
+        success: function(res) {
+          $("#tableId").html(template("contentList", res.data.data));
+
+          if (res.data.data.length !== 0 && callback != null) {
+            $("#pagination-demo").show();
+            $("#tips").hide();
+            callback(res);
+          } else if (
+            res.data.totalPage !== 0 &&
+            res.data.data.length == 0 &&
+            res.data.totalPage == mypage - 1
+          ) {
+            mypage -= 1;
+            $("#pagination-demo").twbsPagination(
+              "changeTotalPages",
+              res.data.totalPage,
+              mypage
+            );
+          } else {
+            $("#pagination-demo").hide();
+            $("#tips").show();
           }
 
-     
-       
-        if(callback!=null){
-          callback(res)
+          if (callback != null) {
+            callback(res);
+          }
         }
-      }
-    });
-
+      });
     }
-    getData(mypage,function(res){
-      $('#pagination-demo').twbsPagination({
+    getData(mypage, function(res) {
+      $("#pagination-demo").twbsPagination({
         totalPages: res.data.totalPage,
         visiblePages: 7,
-        first:'首页',
-        prev:'上一页',
-        next:'下一页',
-        last:'最后一页',
-        onPageClick: function (event, page) {
+        first: "首页",
+        prev: "上一页",
+        next: "下一页",
+        last: "最后一页",
+        onPageClick: function(event, page) {
           mypage = page;
-          getData(mypage,function(){});
+          getData(mypage, function() {});
         }
-      })
-    })
+      });
+    });
 
-$('#btnSearch').on('click',function(e){
-  e.preventDefault()
-  getData(mypage,function(res){
-      $('#pagination-demo').twbsPagination('changeTotalPages',res.data.totalPage,1)
-  })
-})
-$('#tableId').on('click','#delList',function(){
-  if(confirm('你确定要删除吗')){
-
-    $.post({
-      url:BigNew.article_delete,
-      data:{id:$(this).attr('data-id')},
-      success:function(res){
-        
-        getData(mypage,function(){})
+    $("#btnSearch").on("click", function(e) {
+      e.preventDefault();
+      getData(mypage, function(res) {
+        $("#pagination-demo").twbsPagination(
+          "changeTotalPages",
+          res.data.totalPage,
+          1
+        );
+      });
+    });
+    $("#tableId").on("click", "#delList", function() {
+      if (confirm("你确定要删除吗")) {
+        $.post({
+          url: BigNew.article_delete,
+          data: { id: $(this).attr("data-id") },
+          success: function(res) {
+            getData(mypage, function() {});
+          }
+        });
       }
-    })
-  }
-  
-})
-    
+    });
   </script>
 </html>

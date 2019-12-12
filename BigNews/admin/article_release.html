@@ -10,10 +10,17 @@
     <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/iconfont.css">
     <link rel="stylesheet" href="css/main.css">
+    <!-- 时间css -->
+    <link rel="stylesheet" href="./libs/jedate/css/jeDate-test.css">
+    <link rel="stylesheet" href="./libs/jedate/css/jedate.css">
     <!-- jq -->
     <script src="./libs/jquery-1.12.4.min.js"></script>
     <!-- 模板引擎 -->
     <script src="./libs/template-web.js"></script>
+    <!-- 时间插件 -->
+    <script src="./libs/jedate/js/jedate.js"></script>
+    <!-- 插入富文本 -->
+    <script src="./libs/wangEditor/wangEditor.js"></script>
 </head>
 
 <body>
@@ -40,23 +47,35 @@
                     <label for="inputCategory" class="col-sm-2 control-label">文章类别：</label>
                     <div class="col-sm-4">
                         <select class="form-control category" name="categoryId">
-                            <option>类别一</option>
+                            <!-- <option>类别一</option>
                             <option>类别二</option>
                             <option>类别三</option>
                             <option selected>类别四</option>
-                            <option>类别五</option>
+                            <option>类别五</option> -->
                         </select>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label">发布时间：</label>
-                    <div class="col-sm-4">
-                    </div>
+                    <div class="jeinpbox col-sm-4">
+                            <input
+                              type="text"
+                              class="jeinput"
+                              id="testico"
+                              placeholder="YYYY-MM-DD"
+                              name="date"
+                            />
+                            <div
+                              class="icons jebtns"
+                              onclick="jeDate('#testico',{trigger:false,format: 'YYYY-MM-DD',zIndex:30000})"
+                            ></div>
+                          </div>
                 </div>
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">文章内容：</label>
-                    <div class="col-sm-10">
-                    </div>
+                    <div id="editor" class="col-sm-8">
+                            <p></p>
+                          </div>
                 </div>
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
@@ -69,5 +88,63 @@
         </div>
     </div>
 </body>
+<script type="text/html" id="coitionList">
+    {{each $data v}}
+    <option value='{{v.id}}'>{{v.name}}</option>
+    {{/each}}
+</script>
+<script src="./libs/http.js"></script>
+    <script>
+$(function(){
+            //根据change事件获取图片
+            $('#inputCover').on('change',function(){
+           let img=this.files[0]
+           let url=URL.createObjectURL(img)
+            $('.article_cover').attr('src',url)
+        })
+        //获取类别
+        $.get({
+            url:BigNew.category_list,
+            success:function(res){
+             
+                $('.category').html(template('coitionList',res.data))
+            }
+        })
+    // 插入事件插件
+    jeDate("#testico", {
+        format: "YYYY-MM-DD",
+        isTime: false,
+        minDate: "2014-09-19 00:00:00",
+        zIndex: 30000
+      });
+   // 插入富文本
+   var E = window.wangEditor;
+      var editor = new E("#editor");
+      editor.create();
+      //点击发布
+      $('.btn-release').on('click',function(e){
+        e.preventDefault()
+        let fd = new FormData($('#form')[0])
+        //内容
+        fd.append('content',editor.txt.html());
+        //状态
+        fd.append('state','已发布')
+         $.post({
+            url:BigNew.article_publish,
+            data:fd,
+            processData:false,
+            contentType:false,
+            success:function(res){
+                if(res.code==200){
+                    window.history.back();
+                }
+                
+                
+            }
+         })
+          
+      })
 
+})
+    </script>
 </html>

@@ -151,30 +151,43 @@
           $("#testico").val(res.data.date);
           $("select.category").val(res.data.categoryId);
           editor.txt.html(res.data.content);
+          console.log(res);
+          
         }
       });
-      //    点击修改发布
-      $(".btn-edit").on("click", function(e) {
-        e.preventDefault();
-        let fd = new FormData($("#form")[0]);
-        fd.append("content", editor.txt.html());
 
+      $(".btn-edit").on("click", function(e) {
+        e.preventDefault(); //阻止默认行为
+        editList('已发布')
+        
+   });
+
+     function editList(define){
+     
+        let fd = new FormData($("#form")[0]); //使用formData的方式来提交数据
+        fd.append("content", editor.txt.html());
         fd.append("id", listId);
-        fd.append("state", "已发布");
+        fd.append("state",define);
         $.post({
           url: BigNew.article_edit,
           data: fd,
-          processData:false,
-          contentType:false,
+          processData: false,
+          contentType: false,
           success: function(res) {
-            if(res.code===200){
-                window.history.back()
+              console.log(res);
+              
+            if (res.code === 200) {
+              window.history.back();
             }
-          
           }
         });
+     }
+ 
+    //   实现保存草稿
+      $(".btn-default").on("click", function(e) {
+        e.preventDefault(); //阻止默认行为
+        editList('');
       });
-
     });
   </script>
 </html>
