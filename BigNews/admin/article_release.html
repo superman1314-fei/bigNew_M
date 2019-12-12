@@ -121,14 +121,14 @@ $(function(){
    var E = window.wangEditor;
       var editor = new E("#editor");
       editor.create();
-      //点击发布
-      $('.btn-release').on('click',function(e){
-        e.preventDefault()
+
+    //   封装一波
+      function formList(masList){
         let fd = new FormData($('#form')[0])
-        //内容
+               //内容
         fd.append('content',editor.txt.html());
         //状态
-        fd.append('state','已发布')
+        fd.append('state',masList)
          $.post({
             url:BigNew.article_publish,
             data:fd,
@@ -142,8 +142,26 @@ $(function(){
                 
             }
          })
+      }
+
+
+
+      //点击发布
+      $('.btn-release').on('click',function(e){
+        e.preventDefault()
+      
+        formList('已发布')
           
       })
+
+        $('.btn-draft').on('click',function(e){
+            e.preventDefault()
+            formList('')
+            
+
+            
+        })
+
 
 })
     </script>
