@@ -224,9 +224,51 @@
         </div>
         <p>CopyRight © 2019 深圳大事件信息技术股份有限公司 All Rights Reserved</p>
         <p>电话：0755-****888 粤ICP备*******8号</p>
+
     </div>
     <!-- 导包template -->
     <script src="./js/template-web.js"></script>
 </body>
+    <script type="text/html" id="tp1">
+    {{each data.data}}
+    <div class="common_news_list">
+        <a href="#" class="list_pic"><img src="{{$value.cover}}" alt=""></a>
+        <h4><a href="./article.html?{{$value.id}}">{{$value.title}} </a></h4>
+        <p>{{@ $value.content}}
+        </p>
+        <div class="new_info">
+            <span>标签：{{$value.category}}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<i class="fa fa-eye"></i>&nbsp;阅读( {{$value.read}}
+                )&nbsp;&nbsp;&nbsp;<i class="fa fa-commenting"></i>&nbsp;评论( $value.comments )</span>
+            <b>发布于 {{$value.date}}</b>
+        </div>
+    </div>
+    {{/each}}
+    
+    </script>
+    
 
+    <script>
+        $('.search_btn').on('click',function(){
+            
+            let text=$('.search_txt').val()
+            $.get({
+                url:'http://localhost:8080/api/v1/index/search',
+                data:{
+                    page:1,
+                    perpage:10,
+                    key: text
+                },
+                success:function(res){
+                    console.log(res);
+                    $('.setfr').html(template('tp1',res))
+                   
+                }
+                
+            })
+            
+        })   
+        //自动触发事件 
+        $('.search_btn').trigger('click');
+    
+    </script>
 </html>
