@@ -59,8 +59,8 @@
                 当前位置： <a href="#">首页</a> &gt; <a href="#">科技</a> &gt; 文章详情
             </div>
             <h3 class="article_title">马斯克的新花样？连接人脑和电脑的初创公司又筹了一笔钱</h3>
-            <div class="article_info">杰克 发布于 2019-05-08 07:08:46&nbsp;&nbsp;&nbsp;分类: 奇趣事&nbsp;&nbsp;&nbsp;阅读:
-                (98)&nbsp;&nbsp;&nbsp;评论: (0)</div>
+            <!-- 发布 -->
+            <div class="article_info"></div>
             <div class="article_con">
 
                 <p>“上天入地”还不够？硅谷“钢铁侠”马斯克名下一家低调的公司最近又融了一大笔钱。</p>
@@ -207,8 +207,48 @@
 
     <!-- 引入模板引擎js文件 -->
     <script src="./js/template-web.js"></script>
+
     <script src="./js/jquery-1.12.4.min.js"></script>
 
 </body>
+
+<script type="text/html" id="tp1">
+    
+    杰克 发布于{{data.date}}&nbsp;&nbsp;&nbsp;分类: {{data.category}}&nbsp;&nbsp;&nbsp;阅读:
+   ({{data.read}})&nbsp;&nbsp;&nbsp;评论: ({{data.comments}})
+</script>
+<!-- 评论类表 -->
+    <script type="text/html" id="tp2">
+        {{if data.prev}}
+        上一篇： <a href="./article.html?{{data.prev.id}}">{{data.prev.title}}</a><br>
+        {{else}}
+        {{/if}}
+        {{if data.next}}
+        下一篇： <a href="./article.html?{{data.next.id}}">{{data.next.title}}</a><br>
+        {{else}}
+        {{/if}}  
+    </script>
+
+
+    <script>
+        let id=location.search.substring(1)
+    
+        // 设置上一篇和下一篇渲染内容
+        $.get({
+            url:'http://localhost:8080/api/v1/index/article',
+            data:{id:id},   
+            success:function(res){
+                console.log(res);
+                $('.article_title').text(res.data.title)
+                $('.article_con').html(res.data.content)
+                $('.article_info').html(template('tp1',res))
+
+                $('.article_links').html(template('tp2',res))
+
+            }
+        })
+    
+    
+    </script>
 
 </html>

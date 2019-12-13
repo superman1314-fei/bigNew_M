@@ -122,11 +122,14 @@ $(function(){
       var editor = new E("#editor");
       editor.create();
 
+
     //   封装一波
       function formList(masList){
         let fd = new FormData($('#form')[0])
                //内容
-        fd.append('content',editor.txt.html());
+        fd.append('content',editor.txt.text());
+        console.log(editor.txt.text());
+        
         //状态
         fd.append('state',masList)
          $.post({
@@ -151,7 +154,10 @@ $(function(){
         e.preventDefault()
       
         formList('已发布')
-          
+       
+        
+        
+        
       })
 
         $('.btn-draft').on('click',function(e){
