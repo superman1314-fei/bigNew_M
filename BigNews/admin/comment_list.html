@@ -194,14 +194,14 @@
       <td>{{$value.state}}</td>
       <td class="text-center">
         {{if $value.state == '待审核'}}
-        <a href="javascript:editTr( 'rejected',11 );" class="btn btn-warning btn-xs btn-pass" data-id='{{$value.id}}'>通过</a>
+        <a href="javascript:;" class="btn btn-warning btn-xs btn-pass" data-id='{{$value.id}}'>通过</a>
        {{else if $value.state == '已通过'}}
-        <a href="javascript:editTr( 'rejected',11 );" class="btn btn-warning btn-xs btn-nopass" data-id='{{$value.id}}'>拒绝</a>
+        <a href="javascript:;" class="btn btn-warning btn-xs btn-nopass" data-id='{{$value.id}}'>拒绝</a>
        {{else if $value.state =='已拒绝'}}
-       <a href="javascript:editTr( 'rejected',11 );" class="btn btn-warning btn-xs btn-pass" data-id='{{$value.id}}'>通过</a>
+       <a href="javascript:;" class="btn btn-warning btn-xs btn-pass" data-id='{{$value.id}}'>通过</a>
         {{/if}}
 
-        <a href="javascript:editTr( 'trashed',11 );" class="btn btn-danger btn-xs btn-del" data-id='{{$value.id}}'>删除</a>
+        <a href="javascript:;" class="btn btn-danger btn-xs btn-del" data-id='{{$value.id}}'>删除</a>
       </td>
     </tr>
     {{/each}}
@@ -210,7 +210,7 @@
   <script>
     $(function() {
       let mypage = 1;
-      let perpage = 10;
+      let perpage = 11;
 
       function getComData(page, callback) {
         $.get({
@@ -220,7 +220,7 @@
             perpage: perpage
           },
           success: function(res) {
-            console.log(res);
+           
             
             if (res.code === 200) {
               $("tbody").html(template("conList", res));
@@ -228,7 +228,17 @@
                 $('#pagination').show();
                 callback(res)
                 $('#tips').hide()
-              }else if(res.data.totalPage !=0 && res.data.data.length===0 && res.data.totalPage == mypage-1){}
+              }else if(res.data.totalPage !=0 && res.data.data.length===0 && res.data.totalPage == mypage-1){
+                mypage-=1
+                $('#pagination').twbsPagination('changeTotalPages', res.data.totalPage, mypage)
+
+              }else{
+                $('#pagination').hide();
+               
+                setTimeout(()=>{
+                  $('#tips').text('没数据了').show()
+                },500)
+              }
             }
           }
         });
@@ -248,13 +258,49 @@
           }
         });
       })
+    // 删除
+$('tbody').on('click','.btn-del',function(){
+  let id= $(this).attr('data-id')
+ if(confirm('确定要删除吗')){
+  $.post({
+    url:BigNew.comment_delete,
+    data:{id:id},
+    success:function(res){
+      console.log(res);
+      getComData(mypage,function(){})
+    }
+  })
+ }
+  
+})
+    // 通过
+    $('tbody').on('click','.btn-pass',function(){
+  let id= $(this).attr('data-id')
+  $.post({
+    url:BigNew.comment_pass,
+    data:{id:id},
+    success:function(res){
+      console.log(res);
+      getComData(mypage,function(){})
+    }
+  })
+  
+})
 
-      
 
-
-
-
-
+    // 审核不通过
+    $('tbody').on('click','.btn-nopass',function(){
+  let id= $(this).attr('data-id')
+  $.post({
+    url:BigNew.comment_reject,
+    data:{id:id},
+    success:function(res){
+      console.log(res);
+      getComData(mypage,function(){})
+    }
+  })
+  
+})
 
 
     });
