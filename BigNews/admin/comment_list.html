@@ -1,38 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>评论列表</title>
+    <link rel="stylesheet" href="./libs/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/reset.css" />
+    <link rel="stylesheet" href="css/iconfont.css" />
+    <link rel="stylesheet" href="css/main.css" />
+    <script src="./libs/jquery-1.12.4.min.js"></script>
+   
+    <script src="./libs/jquery.twbsPagination.js"></script>
+    <script src="./libs/template-web.js"></script>
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>评论列表</title>
-  <link rel="stylesheet" href="./libs/bootstrap/css/bootstrap.min.css">
-  <link rel="stylesheet" href="css/reset.css">
-  <link rel="stylesheet" href="css/iconfont.css">
-  <link rel="stylesheet" href="css/main.css">
-  <script src="./libs/jquery-1.12.4.min.js"></script>
-  <script src="./libs/template-web.js"></script>
-</head>
-
-<body>
-  <div class="container-fluid">
-    <div class="common_title">
-      评论列表
-    </div>
-    <div class="container-fluid common_con">
-      <table class="table table-striped table-bordered table-hover mp20">
-        <thead>
-          <tr>
-            <th>作者</th>
-            <th>评论</th>
-            <th>评论在</th>
-            <th>提交于</th>
-            <th>状态</th>
-            <th class="text-center" width="100">操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
+  <body>
+    <div class="container-fluid">
+      <div class="common_title">
+        评论列表
+      </div>
+      <div class="container-fluid common_con">
+        <table class="table table-striped table-bordered table-hover mp20">
+          <thead>
+            <tr>
+              <th>作者</th>
+              <th>评论</th>
+              <th>评论在</th>
+              <th>提交于</th>
+              <th>状态</th>
+              <th class="text-center" width="100">操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- <tr>
             <td>小周</td>
             <td>这是一条测试评论，欢迎光临</td>
             <td>《世界，你好》</td>
@@ -138,28 +139,124 @@
               <a href="javascript:editTr( 'rejected',11 );" class="btn btn-warning btn-xs">拒绝</a>
               <a href="javascript:editTr( 'trashed',11 );" class="btn btn-danger btn-xs">删除</a>
             </td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="row text-center">
-        <ul class="pagination pagination-sm">
-          <li class="page-item first disabled"><a href="#" class="page-link">首页</a></li>
-          <li class="page-item prev disabled"><a href="#" class="page-link">上一页</a></li>
-          <li class="page-item active"><a href="#" class="page-link">1</a></li>
-          <li class="page-item"><a href="#" class="page-link">2</a></li>
-          <li class="page-item"><a href="#" class="page-link">3</a></li>
-          <li class="page-item"><a href="#" class="page-link">4</a></li>
-          <li class="page-item"><a href="#" class="page-link">5</a></li>
-          <li class="page-item"><a href="#" class="page-link">6</a></li>
-          <li class="page-item"><a href="#" class="page-link">7</a></li>
-          <li class="page-item next"><a href="#" class="page-link">下一页</a></li>
-          <li class="page-item last"><a href="#" class="page-link">尾页</a></li>
-        </ul>
-        <ul id="pagination" class="pagination-sm"></ul>
+          </tr> -->
+          </tbody>
+        </table>
+        <div class="row text-center">
+          <!-- <ul class="pagination pagination-sm">
+            <li class="page-item first disabled">
+              <a href="#" class="page-link">首页</a>
+            </li>
+            <li class="page-item prev disabled">
+              <a href="#" class="page-link">上一页</a>
+            </li>
+            <li class="page-item active">
+              <a href="#" class="page-link">1</a>
+            </li>
+            <li class="page-item"><a href="#" class="page-link">2</a></li>
+            <li class="page-item"><a href="#" class="page-link">3</a></li>
+            <li class="page-item"><a href="#" class="page-link">4</a></li>
+            <li class="page-item"><a href="#" class="page-link">5</a></li>
+            <li class="page-item"><a href="#" class="page-link">6</a></li>
+            <li class="page-item"><a href="#" class="page-link">7</a></li>
+            <li class="page-item next">
+              <a href="#" class="page-link">下一页</a>
+            </li>
+            <li class="page-item last">
+              <a href="#" class="page-link">尾页</a>
+            </li>
+          </ul>
+          <ul id="pagination" class="pagination-sm"></ul> -->
+            <!-- 分页html代码 -->
+          <ul id="pagination" class="pagination-sm"></ul>
+         
+        </div>
+        <!-- 提示代码 -->
+        <div id="tips"></div>
       </div>
-
     </div>
-  </div>
-</body>
+  </body>
+  <script src="./libs/http.js"></script>
 
+  <!-- 内容渲染出来 -->
+  <script type="text/html" id="conList">
+    {{each data.data }}
+    {{if $value.state == '待审核'}}
+    <tr class="danger">
+      {{else}}
+      <tr>
+    {{/if}}
+
+      <td>{{$value.author}}</td>
+      <td>{{$value.content}}</td>
+      <td>{{$value.title}}</td>
+      <td>{{$value.date}} {{$value.time}}</td>
+      <td>{{$value.state}}</td>
+      <td class="text-center">
+        {{if $value.state == '待审核'}}
+        <a href="javascript:editTr( 'rejected',11 );" class="btn btn-warning btn-xs btn-pass" data-id='{{$value.id}}'>通过</a>
+       {{else if $value.state == '已通过'}}
+        <a href="javascript:editTr( 'rejected',11 );" class="btn btn-warning btn-xs btn-nopass" data-id='{{$value.id}}'>拒绝</a>
+       {{else if $value.state =='已拒绝'}}
+       <a href="javascript:editTr( 'rejected',11 );" class="btn btn-warning btn-xs btn-pass" data-id='{{$value.id}}'>通过</a>
+        {{/if}}
+
+        <a href="javascript:editTr( 'trashed',11 );" class="btn btn-danger btn-xs btn-del" data-id='{{$value.id}}'>删除</a>
+      </td>
+    </tr>
+    {{/each}}
+  </script>
+
+  <script>
+    $(function() {
+      let mypage = 1;
+      let perpage = 10;
+
+      function getComData(page, callback) {
+        $.get({
+          url: BigNew.comment_list,
+          data: {
+            page: page,
+            perpage: perpage
+          },
+          success: function(res) {
+            console.log(res);
+            
+            if (res.code === 200) {
+              $("tbody").html(template("conList", res));
+              if(res.data.data.length !=0 && callback !=null){
+                $('#pagination').show();
+                callback(res)
+                $('#tips').hide()
+              }else if(res.data.totalPage !=0 && res.data.data.length===0 && res.data.totalPage == mypage-1){}
+            }
+          }
+        });
+      }
+      
+        getComData(mypage, function (res) {
+        $('#pagination').twbsPagination({
+          totalPages: res.data.totalPage,
+          visiblePages: 7,
+          first: '首页',
+          prev: '上一页',
+          next: '下一页',
+          last: '尾页',
+          onPageClick: function (event, page) {
+            mypage = page;
+            getComData(mypage, function () {});
+          }
+        });
+      })
+
+      
+
+
+
+
+
+
+
+    });
+  </script>
 </html>
